@@ -1,47 +1,50 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import axios from 'axios';
+import { onMounted, reactive } from 'vue';
+
+const state = reactive({
+  gempa: [],
+  gempaBersih: [],
+});
+
+
+onMounted(()=>{
+  getData();
+})
+
+function getData() {
+  axios.get("https://data.bmkg.go.id/DataMKG/TEWS/autogempa.json").then((ress) => {
+    console.log(ress);
+    state.gempa = ress.data;
+    state.gempaBersih = ress.data.Infogempa.gempa;
+  })
+}
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
-  <main>
-    <TheWelcome />
-  </main>
+  <div>
+    <p>{{ state.gempa }}</p>
+    <p>{{ state.gempa.Infogempa }}</p>
+    <p>{{ state.gempaBersih }}</p>
+    <!-- di bawah cara mendapat rincian -->
+    <h2>Di sini jadi biasa, data yang di dalem state gempa atau state gemba bersih dibreakdown</h2>
+    <p>{{ state.gempaBersih.Tanggal }}</p>
+    <p>{{ state.gempaBersih.Jam }}</p>
+    <p>Bisa juga pake judul. Misal <strong>Magnitude </strong>{{ state.gempaBersih.Magnitude }}</p>
+    <p>{{ state.gempaBersih.Wilayah }}</p>
+    <p class="merah">{{ state.gempaBersih.Potensi }}</p>
+  </div>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
+div {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+.merah {
+  color: red;
+  font-size: 30px;
 }
 </style>
